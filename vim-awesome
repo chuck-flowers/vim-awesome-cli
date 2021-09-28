@@ -62,12 +62,12 @@ va_search() {
 	done
 
 	if [[ "$onlyCached" -eq 1 ]]; then
-		find "$VA_PLUGINS_DATA_DIR" -maxdepth 1 -type f -printf '%f\n' | sed 's/.json$//'
+		find "$VA_PLUGINS_DATA_DIR" -mindepth 1 -maxdepth 1 -type f -printf '%f\n' | sed 's/.json$//'
 		exit 0
 	fi
 
 	if [[ "$onlyInstalled" -eq 1 ]]; then
-		test -d "$VA_VIM_PLUGIN_DIR" && find "$VA_VIM_PLUGIN_DIR" -maxdepth 1 -printf '%f\n'
+		test -d "$VA_VIM_PLUGIN_DIR" && find "$VA_VIM_PLUGIN_DIR" -mindepth 1 -maxdepth 1 -type d -printf '%f\n'
 		exit 0
 	fi
 
