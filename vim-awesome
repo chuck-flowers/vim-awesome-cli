@@ -1,0 +1,123 @@
+#!/usr/bin/bash
+
+# API Endpoints
+API_URL='https://vimawesome.com/api'
+CATEGORIES_URL="$API_URL/categories"
+PLUGINS_URL="$API_URL/plugins";
+
+# Application Files
+VA_CACHE_DIR=${XDG_CACHE_DIR:-"$HOME/.cache/vim-awesome"}
+VA_CATEGORY_DATA_FILE="$VA_CACHE_DIR/categories.json"
+VA_PLUGINS_DATA_DIR="$VA_CACHE_DIR/plugins"
+
+# Vim Files
+VA_VIM_GIT_REPO="$HOME/.dotfiles"
+VA_VIM_CONFIG_DIR="$HOME/.vim"
+VA_VIM_PLUGIN_DIR="$VA_VIM_CONFIG_DIR/pack/vim-awesome/start"
+
+# Ensure that the application directories exist
+test -d "$VA_CACHE_DIR" || mkdir -p "$VA_CACHE_DIR" || exit 1
+test -d "$VA_PLUGINS_DATA_DIR" || mkdir -p "$VA_PLUGINS_DATA_DIR" || exit 1
+
+getPluginData() {
+	local jsonFile
+	jsonFile="$VA_PLUGINS_DATA_DIR/$1.json"
+
+	if [[ -f "$jsonFile" ]]; then
+		cat "$jsonFile"
+	else
+		curl -s "$PLUGINS_URL/$1" | tee "$jsonFile"
+	fi
+}
+
+va_clear() {
+	rm $VA_CACHE_DIR/* -r
+}
+
+va_search() {
+	TEMP=$(getopt -o 'ci' -l 'cached,installed' -n 'vim-awesome' -- "$@")
+	if [ $? -ne 0 ]; then
+		exit 1
+	fi
+
+	eval set -- "$TEMP"
+
+	# Parse option flags
+	local onlyInstalled
+	while true; do
+		case "$1" in
+			'-c'|'--cached')
+				onlyCached=1
+				shift
+			;;
+			'-i'|'--installed')
+				onlyInstalled=1
+				shift
+			;;
+			'--')
+				shift
+				break
+			;;
+			*)
+				echo 'CLI parse error' >&2
+			;;
+		esac	
+	done
+
+	if [[ "$onlyCached" -eq 1 ]]; then
+		find "$VA_PLUGINS_DATA_DIR" -maxdepth 1 -type f -printf '%f\n' | sed 's/.json$//'
+		exit 0
+	fi
+
+	if [[ "$onlyInstalled" -eq 1 ]]; then
+		test -d "$VA_VIM_PLUGIN_DIR" && find "$VA_VIM_PLUGIN_DIR" -maxdepth 1 -printf '%f\n'
+		exit 0
+	fi
+
+	# Performs the search
+	local jsonData pluginName
+	jsonData=$(curl -s "$PLUGINS_URL?query=$1&page=1" | jq -c -r '.plugins[]')
+	while read plugin; do
+		pluginName=$(echo "$plugin" | jq -r '.slug')
+
+		# Cache the plugin information
+		echo "$plugin" > "$VA_PLUGINS_DATA_DIR/$pluginName.json"
+
+		# Display the plugin information
+		echo "$plugin" | jq -r '"\(.slug)\n\t\(.short_desc)"'
+	done <<< "$jsonData"
+}
+
+va_show() {
+	getPluginData "$1" | jq -r '"\(.slug)\n\t\(.short_desc)"'
+}
+
+va_install() {
+	local jsonData pluginName repoUrl
+
+	# Get the plugin data
+	jsonData=$(getPluginData "$1" | jq -r '{ github_url, slug }')
+	pluginName=$(echo "$jsonData" | jq -r '.slug')
+	repoUrl=$(echo "$jsonData" | jq -r '.github_url')
+
+	# Add the git submodule
+	git clone -- "$repoUrl" "$VA_VIM_PLUGIN_DIR/$pluginName"
+}
+
+va_upgrade() {
+	git --git-dir="$VA_VIM_CONFIG_DIR/pack/vim-awesome/start/$1" pull
+}
+
+va_uninstall() {
+	rm -rf "$VA_VIM_PLUGIN_DIR/$1"
+}
+
+functionName="va_$1"
+
+if [[ $(type -t "$functionName")=='function' ]]; then
+	shift
+	eval "$functionName ${@:1}"
+else
+	echo "The command '$1' is not recognized" > /dev/stderr
+fi
+

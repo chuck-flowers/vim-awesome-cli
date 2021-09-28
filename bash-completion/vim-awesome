@@ -1,0 +1,24 @@
+#!/usr/bin/bash
+
+_vim-awesome() {
+	_install() {
+		local cachedPackages
+		cachedPackages=$(vim-awesome search -c)
+		COMPREPLY=($(compgen -W "${cachedPackages[*]}" -- "${COMP_WORDS[${COMP_CWORD}]}"))
+	}
+	_uninstall() {
+		local installedPackages
+		installedPackages=$(vim-awesome search -i)
+		COMPREPLY=($(compgen -W "${installedPackages[*]}" -- "${COMP_WORDS[${COMP_CWORD}]}"))
+	}
+
+	
+	if test $COMP_CWORD -eq 1; then
+		local commands
+		commands=('update' 'clear' 'search' 'show' 'install' 'upgrade' 'uninstall')
+		COMPREPLY=($(compgen -W "${commands[*]}" -- "${COMP_WORDS[${COMP_CWORD}]}"))
+	elif test $(type -t "_${COMP_WORDS[1]}")=="function"; then
+		eval "_${COMP_WORDS[1]}"
+	fi
+} && complete -F _vim-awesome vim-awesome
+
