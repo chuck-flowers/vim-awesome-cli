@@ -13,6 +13,10 @@ _vim-awesome() {
 		COMPREPLY=($(compgen -W "${installedPackages[*]}" -- "${COMP_WORDS[${COMP_CWORD}]}"))
 	}
 
+	_search() {
+		COMPREPLY=($(compgen -W "-c -i" -- "${COMP_WORDS[${COMP_CWORD}]}"))
+	}
+
 	_show() {
 		__autofill_from_cache
 	}
