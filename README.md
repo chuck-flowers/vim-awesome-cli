@@ -32,7 +32,22 @@ vim-awesome uninstall fugitive-vim
 
 ## Installation
 
-To install vim-awesome, run the following command in this repo
+You will need the following dependencies installed to build vim-awesome
+
+* gzip
+* pandoc
+
+You will need the following dependencies installed to run vim-awesome
+
+* bash
+* coreutils (cat, mkdir, rm, test)
+* curl
+* find
+* getopt
+* git
+* jq
+
+To build and install vim-awesome, run the following command in this repo
 
 ```sh
 sudo make install
