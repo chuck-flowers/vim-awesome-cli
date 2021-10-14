@@ -5,6 +5,12 @@ BASE_URL='https://vimawesome.com'
 API_URL="$BASE_URL/api"
 PLUGINS_URL="$API_URL/plugins";
 
+# Plugin JSON keys
+JSON_NAME="slug"
+JSON_AUTHOR="author"
+JSON_CATEGORY="category"
+JSON_DESCRIPTION="github_short_desc"
+
 # Application Files
 VA_CACHE_DIR="${XDG_CACHE_DIR:-"$HOME/.cache/vim-awesome"}"
 VA_PLUGINS_DATA_DIR="$VA_CACHE_DIR/plugins"
@@ -26,6 +32,23 @@ getPluginData() {
 	else
 		curl -s "$PLUGINS_URL/$1" | tee "$jsonFile"
 	fi
+}
+
+prettyFmtJsonPluginData() {
+	# Read the json data from the input
+	local data name author category description;
+	read -r data;
+
+	name=$(echo "$data" | jq -r ".$JSON_NAME");
+	author=$(echo "$data" | jq -r ".$JSON_AUTHOR");
+	category=$(echo "$data" | jq -r ".$JSON_CATEGORY");
+	description=$(echo "$data" | jq -r ".$JSON_DESCRIPTION" | fold -s | sed 's/^/\t/');
+
+	echo "Name: $name"
+	echo "Author: $author"
+	echo "Category: $category"
+	echo "Description:"
+	echo "$description"
 }
 
 va_clear() {
@@ -76,13 +99,15 @@ va_search() {
 	local jsonData pluginName
 	jsonData=$(curl -s "$PLUGINS_URL?query=$1&page=1" | jq -c -r '.plugins[]')
 	while read -r plugin; do
-		pluginName=$(echo "$plugin" | jq -r '.slug')
+		pluginName=$(echo "$plugin" | jq -r ".$JSON_NAME")
 
 		# Cache the plugin information
 		echo "$plugin" > "$VA_PLUGINS_DATA_DIR/$pluginName.json"
 
 		# Display the plugin information
-		echo "$plugin" | jq -r '"\(.slug)\n\t\(.short_desc)"'
+		local name description
+		echo "$(echo "$plugin" | jq -r ".$JSON_NAME")"
+		echo "$(echo "$plugin" | jq -r ".$JSON_DESCRIPTION" | fold -s | sed 's/^/\t/')"
 	done <<< "$jsonData"
 }
 
@@ -114,7 +139,7 @@ va_show() {
 			echo "ERROR: The '--web' flag was used, but xdg-open is not installed" > /dev/stderr
 		fi
 
-		getPluginData "$1" | jq -r '"\(.slug)\n\t\(.short_desc)"'
+		getPluginData "$1" | prettyFmtJsonPluginData
 	fi
 }
 
