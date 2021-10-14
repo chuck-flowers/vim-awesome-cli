@@ -12,7 +12,7 @@ Provides a command line interface to the backend API of the vimawesome.com. This
 
 **vim-awesome** **search** [**-c**|**-i**] _term_
 
-**vim-awesome** **show** _name_
+**vim-awesome** **show** [**-w**] _name_
 
 **vim-awesome** **install** _name_
 
@@ -33,6 +33,12 @@ Provides a command line interface to the backend API of the vimawesome.com. This
 **-i**, **\-\-installed**
 
 : Search only installed plugins
+
+## SHOW OPTIONS
+
+**-w**, **\-\-web**
+
+: Open the web page for the plugin on vim-awesome.com
 
 # EXAMPLES
 

@@ -1,7 +1,8 @@
 #!/usr/bin/bash
 
-# API Endpoints
-API_URL='https://vimawesome.com/api'
+# URLs
+BASE_URL='https://vimawesome.com'
+API_URL="$BASE_URL/api"
 PLUGINS_URL="$API_URL/plugins";
 
 # Application Files
@@ -86,7 +87,35 @@ va_search() {
 }
 
 va_show() {
-	getPluginData "$1" | jq -r '"\(.slug)\n\t\(.short_desc)"'
+	TEMP=$(getopt -o 'w' -l 'web' -n 'vim-awesome' -- "$@" || exit 1)
+	eval set -- "$TEMP"
+
+	local showWeb;
+	while true; do
+		case "$1" in
+			'-w'|'--web')
+				showWeb=1
+				shift
+			;;
+			'--')
+				shift
+				break
+			;;
+		esac
+	done
+
+	local isXdgOpenInstalled;
+	isXdgOpenInstalled=$(type -t xdg-open)
+	if [[ "$showWeb" -eq 1 && -n "$isXdgOpenInstalled" ]]; then
+		xdg-open "$BASE_URL/plugin/$1"
+	else
+		# Alert the user if the website was requested, but couldn't be launched
+		if [[ "$showWeb" -eq 1 ]]; then
+			echo "ERROR: The '--web' flag was used, but xdg-open is not installed" > /dev/stderr
+		fi
+
+		getPluginData "$1" | jq -r '"\(.slug)\n\t\(.short_desc)"'
+	fi
 }
 
 va_install() {

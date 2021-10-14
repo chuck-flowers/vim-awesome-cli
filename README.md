@@ -37,15 +37,20 @@ You will need the following dependencies installed to build vim-awesome
 * gzip
 * pandoc
 
-You will need the following dependencies installed to run vim-awesome
+The CLI makes use of the following dependencies. Some are required dependencies
+for the core functionality, and some are optional dependencies that enable 
+additional features.
 
-* bash
-* coreutils (cat, mkdir, rm, test)
-* curl
-* find
-* getopt
-* git
-* jq
+* Required
+	* bash
+	* coreutils (cat, mkdir, rm, test)
+	* curl
+	* find
+	* getopt
+	* git
+	* jq
+* Optional
+	* xdg-utils (xdg-open)
 
 To build and install vim-awesome, run the following command in this repo
 
