@@ -8,10 +8,10 @@ PLUGINS_URL="$API_URL/plugins";
 # Application Files
 VA_CACHE_DIR="${XDG_CACHE_DIR:-"$HOME/.cache/vim-awesome"}"
 VA_PLUGINS_DATA_DIR="$VA_CACHE_DIR/plugins"
+VA_CONFIG_FILE="${XDG_CONFIG_HOME:-"$HOME/.config/vim-awesome/config"}"
 
 # Vim Files
-VA_VIM_CONFIG_DIR="$HOME/.vim"
-VA_VIM_PLUGIN_DIR="$VA_VIM_CONFIG_DIR/pack/vim-awesome/start"
+VA_VIM_PLUGIN_DIR="$(sed -E 's/^packages-directory (.*)$/\1/' "$VA_CONFIG_FILE" || echo "$HOME/.vim/pack")/vim-awesome/start"
 
 # Ensure that the application directories exist
 test -d "$VA_CACHE_DIR" || mkdir -p "$VA_CACHE_DIR" || exit 1
