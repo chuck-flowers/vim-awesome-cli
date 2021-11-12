@@ -14,7 +14,7 @@ Provides a command line interface to the backend API of the vimawesome.com. This
 
 **vim-awesome** **show** [**-w**] _name_
 
-**vim-awesome** **install** _name_
+**vim-awesome** **install** _name_ ...
 
 **vim-awesome** **upgrade** _name_
 

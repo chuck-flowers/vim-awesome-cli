@@ -140,13 +140,16 @@ va_show() {
 
 va_install() {
 
-	# Get the plugin data
-	jsonData=$(getPluginData "$1" | jq -r '{ github_url, slug }')
-	pluginName=$(echo "$jsonData" | jq -r '.slug')
-	repoUrl=$(echo "$jsonData" | jq -r '.github_url')
+	for package in "$@"; do
+		# Get the plugin data
+		jsonData=$(getPluginData "$package" | jq -r '{ github_url, slug }')
+		pluginName=$(echo "$jsonData" | jq -r '.slug')
+		repoUrl=$(echo "$jsonData" | jq -r '.github_url')
 
-	# Add the git submodule
-	git clone -- "$repoUrl" "$VA_VIM_PLUGIN_DIR/$pluginName"
+		# Add the git submodule
+		git clone -- "$repoUrl" "$VA_VIM_PLUGIN_DIR/$pluginName"
+	done
+
 }
 
 va_upgrade() {
