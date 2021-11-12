@@ -16,12 +16,18 @@ MAN_MARKDOWN_FILES=$(wildcard $(MAN_DIR)/*.md)
 MAN_TROFF_FILES=$(patsubst $(MAN_DIR)/%.md, $(MAN_DIR)/%, $(MAN_MARKDOWN_FILES))
 MAN_COMPRESSED_FILES=$(patsubst $(MAN_DIR)/%.md, $(MAN_DIR)/%.gz, $(MAN_MARKDOWN_FILES))
 
-.PHONY: install uninstall clean
+.PHONY: install install-bin install-completions install-man uninstall clean
 
-install: $(BIN_FILE) $(MAN_COMPRESSED_FILES)
+install: install-bin install-completions install-man
+
+install-bin: $(BIN_FILE)
 	install -m 755 $(BIN_FILE) $(SYS_BIN_DIR)
-	install -m 644 $(MAN_DIR)/*.1.gz $(SYS_MAN_DIR)/man1
+
+install-completions: $(BASH_COMPLETION_DIR)/vim-awesome
 	install -m 644 $(BASH_COMPLETION_DIR)/vim-awesome $(SYS_BASH_COMPLETION_DIR)
+
+install-man: $(MAN_COMPRESSED_FILES)
+	install -m 644 $(MAN_DIR)/*.1.gz $(SYS_MAN_DIR)/man1
 
 uninstall:
 	rm $(SYS_BIN_DIR)/$(BIN_NAME)
