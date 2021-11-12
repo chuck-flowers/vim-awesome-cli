@@ -59,6 +59,8 @@ va_search() {
 		eval set -- "$TEMP"
 
 		# Parse option flags
+		onlyCached=0
+		onlyInstalled=0
 		while true; do
 			case "$1" in
 				'-c'|'--cached')
