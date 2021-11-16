@@ -10,7 +10,7 @@ Provides a command line interface to the backend API of the vimawesome.com. This
 
 # SYNOPSIS
 
-**vim-awesome** **search** [**-c**|**-i**] _term_
+**vim-awesome** **search** [**-c**|**-i**] _term_ ...
 
 **vim-awesome** **show** [**-w**] _name_
 
