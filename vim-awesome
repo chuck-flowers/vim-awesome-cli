@@ -15,10 +15,6 @@ JSON_TAGS="tags"
 # Application Files
 VA_CACHE_DIR="${XDG_CACHE_DIR:-"$HOME/.cache/vim-awesome"}"
 VA_PLUGINS_DATA_DIR="$VA_CACHE_DIR/plugins"
-VA_CONFIG_FILE="${XDG_CONFIG_HOME:-"$HOME/.config/vim-awesome/config"}"
-
-# Vim Files
-VA_VIM_PLUGIN_DIR="$(sed -E 's/^packages-directory (.*)$/\1/' "$VA_CONFIG_FILE" || echo "$HOME/.vim/pack")/vim-awesome/start"
 
 # Ensure that the application directories exist
 test -d "$VA_CACHE_DIR" || mkdir -p "$VA_CACHE_DIR" || exit 1
@@ -91,6 +87,7 @@ va_search() {
 		fi
 
 		if [ "$onlyInstalled" -eq 1 ]; then
+			VA_VIM_PLUGIN_DIR="$(va_config get packages-directory)/vim-awesome/start"
 			test -d "$VA_VIM_PLUGIN_DIR" && find "$VA_VIM_PLUGIN_DIR" -mindepth 1 -maxdepth 1 -type d -printf '%f\n'
 			exit 0
 		fi
@@ -148,6 +145,8 @@ va_show() {
 
 va_install() {
 
+	VA_VIM_PLUGIN_DIR="$(va_config get packages-directory)/vim-awesome/start"
+
 	for package in "$@"; do
 		# Get the plugin data
 		jsonData=$(getPluginData "$package" | jq -r '{ github_url, slug }')
@@ -165,9 +164,59 @@ va_upgrade() {
 }
 
 va_uninstall() {
+	VA_VIM_PLUGIN_DIR="$(va_config get packages-directory)/vim-awesome/start"
 	for package in "$@"; do
 		rm -rf "${VA_VIM_PLUGIN_DIR:?}/$package"
 	done
+}
+
+va_config() {
+	VA_CONFIG_FILE="${XDG_CONFIG_HOME:-"$HOME/.config/vim-awesome/config"}"
+
+	# Validate the variable
+	variable="$2"
+	case "$variable" in
+		'git-directory')
+			;;
+		'packages-directory')
+			;;
+		*)
+			echo "'$variable' is not a valid vim-awesome variable" > /dev/stderr
+			exit 1
+			;;
+	esac
+
+	action="$1"
+	case "$action" in
+		'get')
+			matchExpr="^$variable\\s+(.*)$"
+			replaceExpr='\1'
+			value="$(grep -E "^$variable\\s+" "$VA_CONFIG_FILE" | sed -E "s/$matchExpr/$replaceExpr/")"
+
+			if [ -n "$value" ]; then
+				echo "$value"
+			else
+				case "$variable" in
+					'git-directory')
+						# No Default
+						;;
+					'packages-directory')
+						if command -v nvim > /dev/null; then
+							echo "$HOME/.local/share/nvim/site/pack"
+						else
+							echo "$HOME/.vim/pack"
+						fi
+						;;
+				esac
+			fi
+			;;
+		'set')
+			value="$3"
+			matchExpr="^$variable\\s+"
+			replaceExpr="$variable $value"
+			sed -E "s/$matchExpr/$replaceExpr/" "$VA_CONFIG_FILE"
+			;;
+	esac
 }
 
 va_command="$1"
@@ -190,6 +239,9 @@ case "$va_command" in
 		;;
 	'uninstall')
 		va_uninstall "$@"
+		;;
+	'config')
+		va_config "$@"
 		;;
 	*)
 		echo "The command '$1' is not recognized" > /dev/stderr

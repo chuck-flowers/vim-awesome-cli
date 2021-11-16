@@ -32,10 +32,25 @@ _vim-awesome() {
 	_uninstall() {
 		__autofill_from_installed
 	}
+
+	_config() {
+		local toComplete="${COMP_WORDS[${COMP_CWORD}]}"
+
+		case "$COMP_CWORD" in
+			2)
+				local commands=('get' 'set')
+				mapfile -t COMPREPLY < <(compgen -W "${commands[*]}" -- "$toComplete")
+				;;
+			3)
+				local variables=('git-directory' 'packages-directory')
+				mapfile -t COMPREPLY < <(compgen -W "${variables[*]}" -- "$toComplete")
+				;;
+		esac
+	}
 	
 	if test "$COMP_CWORD" -eq 1; then
 		local commands
-		commands=('clear' 'search' 'show' 'install' 'upgrade' 'uninstall')
+		commands=('clear' 'search' 'show' 'install' 'upgrade' 'uninstall' 'config')
 		mapfile -t COMPREPLY < <(compgen -W "${commands[*]}" -- "${COMP_WORDS[${COMP_CWORD}]}")
 	elif test "$(type -t "_${COMP_WORDS[1]}")" == "function"; then
 		eval "_${COMP_WORDS[1]}"
