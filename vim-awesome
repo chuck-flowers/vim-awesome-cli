@@ -157,7 +157,9 @@ va_upgrade() {
 }
 
 va_uninstall() {
-	rm -rf "${VA_VIM_PLUGIN_DIR:?}/$1"
+	for package in "$@"; do
+		rm -rf "${VA_VIM_PLUGIN_DIR:?}/$package"
+	done
 }
 
 va_command="$1"

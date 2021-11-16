@@ -18,7 +18,7 @@ Provides a command line interface to the backend API of the vimawesome.com. This
 
 **vim-awesome** **upgrade** _name_
 
-**vim-awesome** **uninstall** _name_
+**vim-awesome** **uninstall** _name_ ...
 
 **vim-awesome** **clear**
 
