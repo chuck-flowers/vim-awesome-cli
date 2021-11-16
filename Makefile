@@ -16,7 +16,9 @@ MAN_MARKDOWN_FILES=$(wildcard $(MAN_DIR)/*.md)
 MAN_TROFF_FILES=$(patsubst $(MAN_DIR)/%.md, $(MAN_DIR)/%, $(MAN_MARKDOWN_FILES))
 MAN_COMPRESSED_FILES=$(patsubst $(MAN_DIR)/%.md, $(MAN_DIR)/%.gz, $(MAN_MARKDOWN_FILES))
 
-.PHONY: install install-bin install-completions install-man uninstall clean
+.PHONY: all install install-bin install-completions install-man uninstall clean
+
+all: $(MAN_COMPRESSED_FILES)
 
 install: install-bin install-completions install-man
 
