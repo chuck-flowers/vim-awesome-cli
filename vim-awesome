@@ -50,7 +50,7 @@ prettyFmtJsonPluginData() {
 }
 
 va_clear() {
-	rm "${VA_CACHE_DIR:?}/*" -r
+	find "${VA_CACHE_DIR:?}" -mindepth 1 -delete 
 }
 
 va_search() {
