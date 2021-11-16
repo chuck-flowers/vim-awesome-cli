@@ -119,6 +119,7 @@ va_show() {
 	TEMP=$(getopt -o 'w' -l 'web' -n 'vim-awesome' -- "$@" || exit 1)
 	eval set -- "$TEMP"
 
+	showWeb=0
 	while true; do
 		case "$1" in
 			'-w'|'--web')
