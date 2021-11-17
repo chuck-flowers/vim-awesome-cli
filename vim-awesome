@@ -13,10 +13,13 @@ JSON_DESCRIPTION="github_short_desc"
 JSON_TAGS="tags"
 
 # Application Files
-VA_CACHE_DIR="${XDG_CACHE_DIR:-"$HOME/.cache/vim-awesome"}"
+VA_CONFIG_DIR="${XDG_CONFIG_DIR:-"$HOME/.cache"}/vim-awesome"
+VA_CONFIG_FILE="$VA_CONFIG_DIR/config"
+VA_CACHE_DIR="${XDG_CACHE_DIR:-"$HOME/.cache"}/vim-awesome"
 VA_PLUGINS_DATA_DIR="$VA_CACHE_DIR/plugins"
 
 # Ensure that the application directories exist
+test -d "$VA_CONFIG_DIR" || mkdir -p "$VA_CONFIG_DIR" || exit 1
 test -d "$VA_CACHE_DIR" || mkdir -p "$VA_CACHE_DIR" || exit 1
 test -d "$VA_PLUGINS_DATA_DIR" || mkdir -p "$VA_PLUGINS_DATA_DIR" || exit 1
 
@@ -171,7 +174,7 @@ va_uninstall() {
 }
 
 va_config() {
-	VA_CONFIG_FILE="${XDG_CONFIG_HOME:-"$HOME/.config"}/vim-awesome/config"
+	# Ensure that the user's config file exists
 	[ -e "$VA_CONFIG_FILE" ] || touch "$VA_CONFIG_FILE"
 
 	# Validate the variable
