@@ -20,6 +20,10 @@ Provides a command line interface to the backend API of the vimawesome.com. This
 
 **vim-awesome** **uninstall** _name_ ...
 
+**vim-awesome** **config** **get** _variable_ 
+
+**vim-awesome** **config** **set** _variable_ _value_
+
 **vim-awesome** **clear**
 
 # OPTIONS
