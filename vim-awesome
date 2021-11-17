@@ -41,7 +41,7 @@ prettyFmtJsonPluginData() {
 	author=$(echo "$data" | jq -r ".$JSON_AUTHOR");
 	category=$(echo "$data" | jq -r ".$JSON_CATEGORY");
 	description=$(echo "$data" | jq -r ".$JSON_DESCRIPTION" | fold -s | sed 's/^/\t/');
-	tags=$(echo "$data" | jq -r ".$JSON_TAGS[]" | while read -r line; do printf '\t* %s\n' "$line"; done)
+	tags=$(echo "$data" | jq -r ".${JSON_TAGS}[]" | while read -r line; do printf '\t* %s\n' "$line"; done)
 
 	echo "Name: $name"
 	echo "Author: $author"
