@@ -171,7 +171,8 @@ va_uninstall() {
 }
 
 va_config() {
-	VA_CONFIG_FILE="${XDG_CONFIG_HOME:-"$HOME/.config/vim-awesome/config"}"
+	VA_CONFIG_FILE="${XDG_CONFIG_HOME:-"$HOME/.config"}/vim-awesome/config"
+	[ -e "$VA_CONFIG_FILE" ] || touch "$VA_CONFIG_FILE"
 
 	# Validate the variable
 	variable="$2"
