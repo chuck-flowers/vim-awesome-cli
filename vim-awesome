@@ -151,10 +151,30 @@ va_install() {
 	VA_VIM_PLUGIN_DIR="$(va_config get packages-directory)/vim-awesome/start"
 
 	for package in "$@"; do
-		# Get the plugin data
-		jsonData=$(getPluginData "$package" | jq -r '{ github_url, slug }')
-		pluginName=$(echo "$jsonData" | jq -r '.slug')
-		repoUrl=$(echo "$jsonData" | jq -r '.github_url')
+
+		case "$package" in
+			'http:'*|'https:'*)
+				pluginName="$(echo "$package" | rev | cut -d/ -f1 | rev)"
+				repoUrl="$package"
+				;;
+			'github:'*)
+				pluginName="$(echo "$package" | rev | cut -d/ -f1 | rev)"
+				repoUrl="$(echo "$package" | sed -E 's|^github:(.*)$|https://github.com/\1|')"
+				;;
+			'gitlab:'*)
+				pluginName="$(echo "$package" | rev | cut -d/ -f1 | rev)"
+				repoUrl="$(echo "$package" | sed -E 's|^gitlab:(.*)$|https://gitlab.com/\1|')"
+				;;
+			*/*)
+				pluginName="$(echo "$package" | rev | cut -d/ -f1 | rev)"
+				repoUrl="https://github.com/$package"
+				;;
+			*)
+				jsonData=$(getPluginData "$package" | jq -r '{ github_url, slug }')
+				pluginName=$(echo "$jsonData" | jq -r '.slug')
+				repoUrl=$(echo "$jsonData" | jq -r '.github_url')
+				;;
+		esac
 
 		# Add the git submodule
 		git clone -- "$repoUrl" "$VA_VIM_PLUGIN_DIR/$pluginName"
