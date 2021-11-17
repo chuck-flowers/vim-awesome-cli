@@ -4,10 +4,6 @@
 
 vim-awesome - A command line interface for interacting with the vimawesome.com catalogue
 
-# DESCRIPTION
-
-Provides a command line interface to the backend API of the vimawesome.com. This allows for searching the vimawesome.com catalogue and installing the plugins that are listed in the catalogue as well as the uninstallation of plugins that are installed with this CLI.
-
 # SYNOPSIS
 
 **vim-awesome** **search** [**-c**|**-i**] _term_ ...
@@ -25,6 +21,13 @@ Provides a command line interface to the backend API of the vimawesome.com. This
 **vim-awesome** **config** **set** _variable_ _value_
 
 **vim-awesome** **clear**
+
+# DESCRIPTION
+
+Provides a command line interface to the backend API of the vimawesome.com.
+This allows for searching the vimawesome.com catalogue and installing the
+plugins that are listed in the catalogue as well as the uninstallation of
+plugins that are installed with this CLI.
 
 # OPTIONS
 
