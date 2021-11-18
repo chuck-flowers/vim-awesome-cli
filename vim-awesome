@@ -268,7 +268,7 @@ case "$va_command" in
 		va_config "$@"
 		;;
 	*)
-		echo "The command '$1' is not recognized" > /dev/stderr
+		echo "The command '$va_command' is not recognized" > /dev/stderr
 		;;
 esac
 
