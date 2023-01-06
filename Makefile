@@ -1,7 +1,9 @@
+PREFIX ?= /usr/local
+
 # System paths
-SYS_BASH_COMPLETION_DIR=/usr/share/bash-completion/completions
-SYS_BIN_DIR=/usr/bin
-SYS_MAN_DIR=/usr/share/man
+SYS_BASH_COMPLETION_DIR=$(PREFIX)/share/bash-completion/completions
+SYS_BIN_DIR=$(PREFIX)/bin
+SYS_MAN_DIR=$(PREFIX)/share/man
 
 # Binary
 BIN_NAME=vim-awesome
