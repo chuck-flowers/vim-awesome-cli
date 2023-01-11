@@ -26,15 +26,15 @@ install: install-bin install-completions install-man
 
 .PHONY: install-bin
 install-bin: $(BIN_FILE)
-	install -m 755 $(BIN_FILE) $(SYS_BIN_DIR)
+	install -Dm 755 $(BIN_FILE) $(SYS_BIN_DIR)
 
 .PHONY: install-completions
 install-completions: $(BASH_COMPLETION_DIR)/vim-awesome
-	install -m 644 $(BASH_COMPLETION_DIR)/vim-awesome $(SYS_BASH_COMPLETION_DIR)
+	install -Dm 644 $(BASH_COMPLETION_DIR)/vim-awesome $(SYS_BASH_COMPLETION_DIR)
 
 .PHONY: install-man
 install-man: $(MAN_COMPRESSED_FILES)
-	install -m 644 $(MAN_DIR)/*.1.gz $(SYS_MAN_DIR)/man1
+	install -Dm 644 $(MAN_DIR)/*.1.gz $(SYS_MAN_DIR)/man1
 
 .PHONY: uninstall
 uninstall:
